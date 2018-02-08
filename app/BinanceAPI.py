@@ -1,6 +1,8 @@
+from __future__ import absolute_import
 import time
 import hashlib
 import requests
+import json
 
 try:
     from urllib import urlencode
@@ -48,7 +50,7 @@ class BinanceAPI:
         return self._get(path, {})
 
     def get_products(self):
-        return requests.get(self.PUBLIC_URL, timeout=30, verify=True).json()
+        return json.loads(requests.get(self.PUBLIC_URL, timeout=30, verify=True).content) 
         
     def get_exchance_info(self):
         path = "%s/exchangeInfo" % self.BASE_URL

@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 # @yasinkuyu
+from __future__ import absolute_import
+from __future__ import print_function
 import config 
 
 from BinanceAPI import BinanceAPI
@@ -60,12 +62,12 @@ class Orders():
             if 'msg' in order:
                 Messages.get(order['msg'])
             
-            print ('Profit loss, called order, %s' % (orderId))
+            print(('Profit loss, called order, %s' % (orderId)))
         
             return True
         
         except Exception as e:
-            print ('co: %s' % (e))
+            print(('co: %s' % (e)))
             return False
 
     @staticmethod
@@ -79,7 +81,7 @@ class Orders():
             return lastBid, lastAsk
     
         except Exception as e:
-            print ('ob: %s' % (e))
+            print(('ob: %s' % (e)))
             return 0, 0
 
     @staticmethod
@@ -95,7 +97,7 @@ class Orders():
             return order
 
         except Exception as e:
-            print ('go: %s' % (e))
+            print(('go: %s' % (e)))
             return False
     
     @staticmethod
@@ -110,7 +112,7 @@ class Orders():
             return order['status']
  
         except Exception as e:
-            print ('gos: %s' % (e))
+            print(('gos: %s' % (e)))
             return None
     
     @staticmethod
@@ -121,7 +123,7 @@ class Orders():
  
             return float(ticker['lastPrice'])
         except Exception as e:
-            print ('gt: %s' % (e))
+            print(('gt: %s' % (e)))
     
     @staticmethod
     def get_info(symbol):

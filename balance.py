@@ -1,8 +1,13 @@
-#!/usr/bin/python2.7
+#!python3
 # -*- coding: UTF-8 -*-
-# @yasinkuyu
 
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
+import csv
+BinanceAPIException = BaseException()
+
+from six.moves import input
 
 sys.path.insert(0, './app')
 
@@ -20,18 +25,18 @@ class Binance:
 
         for balance in balances['balances']:
             if float(balance['locked']) > 0 or float(balance['free']) > 0:
-                print ('%s: %s' % (balance['asset'], balance['free']))
+                print(('%s: %s' % (balance['asset'], balance['free'])))
 
     def balance(self, asset="BTC"):
         balances = self.client.get_account()
 
         balances['balances'] = {item['asset']: item for item in balances['balances']}
         
-        print balances['balances'][asset]['free']
+        print(balances['balances'][asset]['free'])
                  
     def orders(self, symbol, limit):
         orders = self.client.get_open_orders(symbol, limit)
-        print orders
+        print(orders)
 
     def tickers(self):
         return self.client.get_all_tickers()
@@ -42,22 +47,58 @@ class Binance:
     def openorders(self):
         return self.client.get_open_orders()
         
-    def profits(self, asset='BTC'):
+    def profits(self): #, asset='BTC'):
         
         coins = self.client.get_products()
 
         for coin in coins['data']:
+            '''
+            'symbol': 'ETHUSDT'
+            'quoteAssetName': 'TetherUS'
+            'tradedMoney': 284293645.1457105
+            'baseAssetName': 'Ethereum'
+            'baseAsset': 'ETH'
+            'tickSize': '0.01'
+            'prevClose': 768.56
+            'activeBuy': 0
+            'high': '849.00'
+            'lastAggTradeId': -1
+            'low': '714.18'
+            'matchingUnitType': 'STANDARD'
+            'close': '781.66'
+            'quoteAsset': 'USDT'
+            'active': True
+            'minTrade': '0.00001000'
+            'activeSell': 359073.8194
+            'withdrawFee': '0'
+            'volume': '359073.82'
+            'decimalPlaces': 8
+            '''
+            # Returns all symbols and spread profit
+            orders = self.client.get_orderbooks(coin['symbol'], 1000)
+            lastBid = float(orders['bids'][0][0]) #last buy price (bid)
+            lastAsk = float(orders['asks'][0][0]) #last sell price (ask)
+    
+            profit = (lastAsk - lastBid) /  lastBid * 100
             
+            f = open('profit.csv', 'a+')
+            f.write('profit, symbol, volume,')
+            f.write('%.2f%%, %s, %s \n' % (profit, coin['symbol'], coin['volume']))
+            f.close()
+            
+            #print('%.2f%%, %s, %.2f' % (profit, coin['symbol'], coin['volume']))
+            
+            '''
             if coin['quoteAsset'] == asset:
                     
                 orders = self.client.get_orderbooks(coin['symbol'], 5)
                 lastBid = float(orders['bids'][0][0]) #last buy price (bid)
                 lastAsk = float(orders['asks'][0][0]) #last sell price (ask)
     
-                profit = (lastAsk - lastBid) /  lastBid * 100
+                profit = (lastAsk - lastBid) /  lastBid * 10
             
-                print ('%.2f%% profit : %s (bid:%.8f-ask%.8f)' % (profit, coin['symbol'], lastBid, lastAsk))
-            
+                print(('%.2f%%, %s, (bid:%.8f, ask%.8f)' % (profit, coin['symbol'], lastBid, lastAsk)))
+            '''
 try:
 
     m = Binance()
@@ -68,16 +109,16 @@ try:
     print ('4 -) Check balance')
     print ('Enter option number: Ex: 2')
 
-    option = raw_input()
+    option = input()
     
     if option is '1':
         
-        print ('Enter symbol: Ex: XVGBTC')
+        print('Enter symbol: Ex: XVGBTC')
         
-        symbol = raw_input()
+        symbol = input()
         
         # Orders
-        print ('%s Orders' % (symbol))
+        print('%s Orders' % (symbol))
         m.orders(symbol, 10)
     
     elif option is '3':
@@ -86,20 +127,22 @@ try:
         
         print ('Enter asset: Ex: BTC')
         
-        symbol = raw_input()
+        symbol = input()
         
-        print ('%s balance' % (symbol))
+        print('%s balance' % (symbol))
         
         m.balance(symbol)
     else:
         
-        print ('Enter Asset (Ex: BTC, ETC, BNB, USDT)')
+        #print ('Enter Asset (Ex: BTC, ETC, BNB, USDT)')
         
-        asset = raw_input()
+        #asset = input()
         
-        print 'Profits scanning...'
-        m.profits(asset)
+        print('Profits scanning...')
+        m.profits() #asset)
 
-except 'BinanceAPIException' as e:
-    print (e.status_code)
-    print (e.message)
+except BaseException as e:
+    print(e)
+    #print(e.status_code)
+    #print(e.message)
+

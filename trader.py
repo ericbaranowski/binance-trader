@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # @yasinkuyu
 
+from __future__ import absolute_import
 import sys
 import argparse
 

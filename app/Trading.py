@@ -2,6 +2,8 @@
 # @yasinkuyu
 
 # Define Python imports
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import sys
 import time
@@ -75,14 +77,14 @@ class Trading():
             # Database log
             Database.write([orderId, symbol, 0, buyPrice, 'BUY', quantity, self.option.profit])
                             
-            print ('Buy order created id:%d, q:%.8f, p:%.8f' % (orderId, quantity, float(buyPrice)))
+            print(('Buy order created id:%d, q:%.8f, p:%.8f' % (orderId, quantity, float(buyPrice))))
         
             self.order_id = orderId
             
             return orderId
 
         except Exception as e:
-            print ('bl: %s' % (e))
+            print(('bl: %s' % (e)))
             time.sleep(self.WAIT_TIME_BUY_SELL)
             return None
 
@@ -113,15 +115,15 @@ class Trading():
         sell_order = Orders.sell_limit(symbol, quantity, sell_price)  
 
         sell_id = sell_order['orderId']
-        print ('Sell order create id: %d' % sell_id)
+        print(('Sell order create id: %d' % sell_id))
 
         time.sleep(self.WAIT_TIME_CHECK_SELL)
 
         if sell_order['status'] == 'FILLED':
 
-            print ('Sell order (Filled) Id: %d' % sell_id)
-            print ('LastPrice : %.8f' % last_price)
-            print ('Profit: %%%s. Buy price: %.8f Sell price: %.8f' % (self.option.profit, float(sell_order['price']), sell_price))
+            print(('Sell order (Filled) Id: %d' % sell_id))
+            print(('LastPrice : %.8f' % last_price))
+            print(('Profit: %%%s. Buy price: %.8f Sell price: %.8f' % (self.option.profit, float(sell_order['price']), sell_price)))
             
             self.order_id = 0
             self.order_data = None
@@ -152,7 +154,7 @@ class Trading():
                 time.sleep(self.WAIT_TIME_CHECK_SELL)
                 sell_status = Orders.get_order(symbol, sell_id)['status']
                 lastPrice = Orders.get_ticker(symbol)
-                print ('Status: %s Current price: %.8f Sell price: %.8f' % (sell_status, lastPrice, sell_price))
+                print(('Status: %s Current price: %.8f Sell price: %.8f' % (sell_status, lastPrice, sell_price)))
                 print ('Sold! Continue trading...')
             
             self.order_id = 0
@@ -178,7 +180,7 @@ class Trading():
             
                     sello = Orders.sell_market(symbol, quantity)  
    
-                    print ('Stop-loss, sell market, %s' % (last_price))
+                    print(('Stop-loss, sell market, %s' % (last_price)))
         
                     sell_id = sello['orderId']
                 
@@ -196,7 +198,7 @@ class Trading():
                             return False
                 else:
                     sello = Orders.sell_limit(symbol, quantity, lossprice)
-                    print ('Stop-loss, sell limit, %s' % (lossprice))
+                    print(('Stop-loss, sell limit, %s' % (lossprice)))
                     time.sleep(self.WAIT_TIME_STOP_LOSS)
                     statusloss = sello['status']
                     if statusloss != 'NEW':
@@ -240,7 +242,7 @@ class Trading():
         
             status = order['status']
 
-            print ('Wait buy order: %s id:%d, price: %.8f, orig_qty: %.8f' % (symbol, order['orderId'], price, orig_qty))
+            print(('Wait buy order: %s id:%d, price: %.8f, orig_qty: %.8f' % (symbol, order['orderId'], price, orig_qty)))
         
             if status == 'NEW':
             
@@ -294,7 +296,7 @@ class Trading():
             return lastBid + (lastBid * self.option.profit / 100)
 
         except Exception as e:
-            print ('c: %s' % (e))
+            print(('c: %s' % (e)))
             return 
             
     def checkorder(self):
@@ -332,7 +334,7 @@ class Trading():
         # Screen log
         if self.option.prints and self.order_id == 0:
             spreadPerc = (lastAsk/lastBid - 1) * 100.0
-            print ('price:%.8f buyp:%.8f sellp:%.8f-bid:%.8f ask:%.8f spread:%.2f' % (lastPrice, buyPrice, profitableSellingPrice, lastBid, lastAsk, spreadPerc))
+            print(('price:%.8f buyp:%.8f sellp:%.8f-bid:%.8f ask:%.8f spread:%.2f' % (lastPrice, buyPrice, profitableSellingPrice, lastBid, lastAsk, spreadPerc)))
         
         # analyze = threading.Thread(target=analyze, args=(symbol,))
         # analyze.start()
@@ -457,16 +459,16 @@ class Trading():
         
         # minQty = minimum order quantity
         if quantity < minQty:
-            print ("Invalid quantity, minQty: %.8f (u: %.8f)" % (minQty, quantity))
+            print(("Invalid quantity, minQty: %.8f (u: %.8f)" % (minQty, quantity)))
             valid = False
         
         if lastPrice < minPrice:
-            print ("Invalid price, minPrice: %.8f (u: %.8f)" % (minPrice, lastPrice))
+            print(("Invalid price, minPrice: %.8f (u: %.8f)" % (minPrice, lastPrice)))
             valid = False
 
         # minNotional = minimum order value (price * quantity)
         if notional < minNotional:
-            print ("Invalid notional, minNotional: %.8f (u: %.8f)" % (minNotional, notional))
+            print(("Invalid notional, minNotional: %.8f (u: %.8f)" % (minNotional, notional)))
             valid = False
         
         if not valid:
@@ -480,14 +482,14 @@ class Trading():
         symbol = self.option.symbol
 
         print ('@yasinkuyu, 2018')
-        print ('Auto Trading for Binance.com. --symbol: %s\n' % (symbol))
+        print(('Auto Trading for Binance.com. --symbol: %s\n' % (symbol)))
 
         print ('... \n')
 
         # Validate symbol
         self.validate()
         
-        print ('Started... --quantity: %.8f\n' % (self.quantity))
+        print(('Started... --quantity: %.8f\n' % (self.quantity)))
         
         if self.option.mode == 'range':
 
@@ -495,13 +497,13 @@ class Trading():
                print ('Plese enter --buyprice / --sellprice\n')
                exit(1)
 
-           print ('Wait buyprice:%.8f sellprice:%.8f' % (self.option.buyprice, self.option.sellprice))
+           print(('Wait buyprice:%.8f sellprice:%.8f' % (self.option.buyprice, self.option.sellprice)))
 
         else:
-           print ('%s%% profit scanning for %s \n' % (self.option.profit, symbol))
-           print ('Between Ask and Bid %s%% profit hunting' % (self.option.profit))
-           print ('buyp : BuyPrice  (Bid+ --increasing %.8f)' % (self.increasing))
-           print ('sellp: SellPrice (Bid- --decreasing %.8f)' % (self.decreasing))
+           print(('%s%% profit scanning for %s \n' % (self.option.profit, symbol)))
+           print(('Between Ask and Bid %s%% profit hunting' % (self.option.profit)))
+           print(('buyp : BuyPrice  (Bid+ --increasing %.8f)' % (self.increasing)))
+           print(('sellp: SellPrice (Bid- --decreasing %.8f)' % (self.decreasing)))
 
         print ('... \n')
            
